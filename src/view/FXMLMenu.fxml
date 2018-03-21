@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="581.0" prefWidth="983.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLMenuController">
+   <bottom>
+      <Label fx:id="estado" prefHeight="17.0" prefWidth="962.0" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+   </bottom>
+   <top>
+      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
+         <menus>
+            <Menu mnemonicParsing="false" text="_Archivo">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#Salir" text="Salir">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+               </items>
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator>
+            </Menu>
+            <Menu mnemonicParsing="false" text="_Ver">
+               <items>
+                  <MenuItem fx:id="mAlumnos" mnemonicParsing="false" onAction="#irAAlumnos" text="Alumnos">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="mCursos" mnemonicParsing="false" onAction="#irACursos" text="Cursos">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+               </items>
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="V" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator>
+            </Menu>
+            <Menu fx:id="menuOpciones" mnemonicParsing="false" text="_Opciones">
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

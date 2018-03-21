@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLAlumnosListController">
+    <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="463.0" prefWidth="600.0">
+       <center>
+          <TableView fx:id="alumnosList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+             <BorderPane.margin>
+             </BorderPane.margin>
+             <columns>
+                <TableColumn fx:id="dniColumn" prefWidth="75.0" text="DNI" />
+                <TableColumn fx:id="nombreColumn" maxWidth="1.7976931348623157E308" prefWidth="250.0" text="Nombre" />
+                <TableColumn fx:id="edadColumn" prefWidth="55.0" text="Edad" />
+                <TableColumn fx:id="direccionColumn" prefWidth="303.0" text="Dirección" />
+                <TableColumn fx:id="altaColumn" prefWidth="70.0" text="Fecha Alta" />
+                <TableColumn fx:id="fotoColumn" prefWidth="65.0" text="Foto" />
+             </columns>
+             <columnResizePolicy>
+                </columnResizePolicy>
+          </TableView>
+       </center>
+       <top>
+          <HBox alignment="CENTER" prefHeight="44.0" prefWidth="710.0" spacing="10.0" BorderPane.alignment="CENTER">
+             <children>
+                <Button fx:id="Modificar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#modificar" prefHeight="25.0" prefWidth="68.0" text="Modificar" textAlignment="CENTER">
+                   <HBox.margin>
+                   </HBox.margin>
+                </Button>
+                <Button fx:id="Borrar" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrar" prefHeight="25.0" prefWidth="75.0" text="Borrar" textAlignment="CENTER">
+                   <cursor>
+                      </cursor>
+                   <HBox.margin>
+                   </HBox.margin></Button>
+                <Button fx:id="Añadir" mnemonicParsing="false" onAction="#añadir" prefHeight="25.0" prefWidth="69.0" text="Añadir" textAlignment="CENTER">
+                   <HBox.margin>
+                   </HBox.margin>
+                </Button>
+             </children>
+             <BorderPane.margin>
+             </BorderPane.margin>
+          </HBox>
+       </top>
+       <left>
+          <VBox prefWidth="20.0" BorderPane.alignment="CENTER" />
+       </left>
+       <right>
+          <VBox prefWidth="20.0" BorderPane.alignment="CENTER" />
+       </right>
+       <bottom>
+          <HBox prefHeight="29.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+       </bottom>
+    </BorderPane>
+</AnchorPane>
