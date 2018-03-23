@@ -5,24 +5,27 @@
  */
 package controller;
 
+import java.io.File;
 import java.net.URL;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import modelo.Alumno;
 import testlibrary.TestLibrary;
-
 
 /**
  * FXML Controller class
@@ -74,7 +77,7 @@ public class FXMLAlumnoViewController implements Initializable {
             this.nombre.setText("");
             this.edad.setText("");
             this.direccion.setText("");
-            this.fechaalta.setText(TestLibrary.parseFechaDMA(LocalDate.now()));
+            this.fechaalta.setText(mainApp.parseFechaDMA(LocalDate.now()));
         }
         else {
             if ("Borrar".equals(accion)) {panelGrid.disableProperty().setValue(true);}
@@ -83,7 +86,7 @@ public class FXMLAlumnoViewController implements Initializable {
             this.nombre.setText(this.alumno.getNombre());
             this.edad.setText(this.alumno.getEdad()+"");
             this.direccion.setText(this.alumno.getDireccion());
-            this.fechaalta.setText(TestLibrary.parseFechaDMA(this.alumno.getFechadealta()));
+            this.fechaalta.setText(mainApp.parseFechaDMA(this.alumno.getFechadealta()));
             
             this.foto.setImage(this.alumno.getFoto());
         }
@@ -99,7 +102,7 @@ public class FXMLAlumnoViewController implements Initializable {
                 this.alumno.setNombre(nombre.getText());
                 this.alumno.setDireccion(direccion.getText());
                 this.alumno.setFoto(foto.getImage());
-                this.alumno.setFechadealta(TestLibrary.parseFechaAMD(this.fechaalta.getText()));
+                this.alumno.setFechadealta(mainApp.parseFechaAMD(this.fechaalta.getText()));
                 
                 this.alumno.setEdad(Integer.parseInt(edad.getText()));
                 okAccion = true;
@@ -111,6 +114,20 @@ public class FXMLAlumnoViewController implements Initializable {
         modalStage.close();
     }
     
+    public void newFoto(){
+        JFileChooser jf = new JFileChooser();
+        jf.setDialogTitle("Selección de imagen");
+        jf.setAcceptAllFileFilterUsed(false);
+        jf.setFileFilter(new FileNameExtensionFilter("jpg, png, gif", "jpg", "png", "gif"));
+        int sel = jf.showOpenDialog(null);
+        if (sel == JFileChooser.APPROVE_OPTION) {
+            String rutaOrigen = jf.getSelectedFile().getAbsolutePath();
+            File imageFile = new File(rutaOrigen);
+            String fileLocation = imageFile.toURI().toString();
+            Image imagen2 = new Image(fileLocation);
+            this.foto.setImage(imagen2);
+        }
+    }
         
     public void setMain(TestLibrary mainApp) {
         this.mainApp = mainApp;
