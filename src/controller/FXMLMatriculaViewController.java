@@ -21,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import modelo.Alumno;
 import modelo.Curso;
 import modelo.Matricula;
@@ -60,7 +61,6 @@ public class FXMLMatriculaViewController implements Initializable {
     public boolean isOkAccion() {return okAccion;}
     
     public void initStage(Stage stage,Curso curso, Matricula matricula, String a) throws ParseException {
-        System.out.println("matricular 5");
         this.curso=curso;    
         modalStage = stage;
         this.matricula=matricula;
@@ -68,17 +68,27 @@ public class FXMLMatriculaViewController implements Initializable {
         modalStage.setTitle(accion);
         this.tituloCurso.setText(this.curso.getTitulodelcurso());
         nombreAlumno.setItems(mainApp.alumnosObsList);
-        Callback<ListView<Alumno>, ListCell<Alumno>> factory = lv -> new ListCell<Alumno>() {
-            @Override
-            protected void updateItem(Alumno item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? "" : item.getNombre());
-            }
+        Callback<ListView<Alumno>, ListCell<Alumno>> factory;
+        factory = (ListView<Alumno> lv) -> {
+            return new ListCell<Alumno>() {
+                @Override
+                protected void updateItem(Alumno item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty ? "" : item.getNombre());
+                }
+            };
         };
         nombreAlumno.setCellFactory(factory);
         nombreAlumno.setButtonCell(factory.call(null));
+        StringConverter<Alumno> converter = new StringConverter<Alumno>() {
+            @Override
+            public String toString(Alumno object) {return object.getNombre();}
+            @Override
+            public Alumno fromString(String string) {return null;}
+        };
+       nombreAlumno.setConverter(converter);
+
         if ("Añadir".equals(accion)) {
-            //this.nombreAlumno.setText("");
             this.fecha.setText(mainApp.parseFechaDMA(LocalDate.now()));
         }
         else {
