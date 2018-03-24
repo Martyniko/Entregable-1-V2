@@ -12,7 +12,6 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -40,7 +39,6 @@ public class TestLibrary extends Application {
     public static final AccesoaBD acceso= new AccesoaBD();
     public static ObservableList<Alumno> alumnosObsList=FXCollections.observableList(acceso.getAlumnos());
     public static ObservableList<Curso> cursosObsList=FXCollections.observableList(acceso.getCursos());
-    public static ObservableList<Matricula> matriculasObsList=FXCollections.observableList(acceso.getMatriculas());
     public static ObservableList<Matricula> matriculasObsListTodas=FXCollections.observableList(acceso.getMatriculas());
     
     private Stage primaryStage;
@@ -100,8 +98,7 @@ public class TestLibrary extends Application {
     public void loadMatriculas(Curso curso) {
         FXMLMatriculasListController controller = loadLista("/view/FXMLMatriculasList.fxml").getController();
         controller.setMain(this);
-        matriculasObsList= FXCollections.observableList(acceso.getMatriculasDeCurso(curso));
-        controller.initStage(primaryStage, curso,matriculasObsList);
+        controller.initStage(primaryStage, curso);
     }
     
     public Boolean loadVentanaMatricula(Curso curso, Matricula matricula, String accion) throws ParseException {
@@ -168,17 +165,14 @@ public class TestLibrary extends Application {
         Optional<ButtonType> result = alert.showAndWait();
     }
     
-    public  static Boolean isAlumnoEnCurso(Alumno alumno) {
-        Boolean isOk=false;
-        for (Matricula matricula: matriculasObsList) {
-            if(alumno.getDni().equals(matricula.getAlumno().getDni())) isOk=true;
-        }
-        return isOk;
-    }
+    public static boolean isFecha(String fechaAValidar) {
+        String ExpReg ="^([0-2][0-9]||3[0-1])/(0[0-9]||1[0-2])/([0-9][0-9])?[0-9][0-9]$";
+        return (fechaAValidar.matches(ExpReg));
+       }
     
-    public static Boolean isCursoCompleto(Curso mcurso) {
-        if(matriculasObsList.isEmpty()) return false;
-        else return (mcurso.getNumeroMaximodeAlumnos() == matriculasObsList.size());
+    public static boolean isHora(String horaAValidar) {
+        String ExpReg ="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
+        return (horaAValidar.matches(ExpReg));
     }
     
     public static LocalTime parseHoraHM(String hora) throws ParseException{
@@ -191,5 +185,4 @@ public class TestLibrary extends Application {
     public static String  parseFechaDMA(LocalDate fecha) {
         return  fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
     }
-
 }
