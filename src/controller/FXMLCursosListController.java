@@ -50,10 +50,10 @@ public class FXMLCursosListController implements Initializable {
     @FXML private TableColumn<Curso, LocalDate> ffinColumn;
     @FXML private TableColumn<Curso, LocalTime> horaColumn;
 
-    @FXML public void initialize(URL url, ResourceBundle rb) {
+    @FXML@Override
+    public void initialize(URL url, ResourceBundle rb) {
         tituloColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitulodelcurso()));
         profesorColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getProfesorAsignado()));
-        //edadColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getEdad()));
         maxalumnosColumn.setCellValueFactory(new PropertyValueFactory<>("numeroMaximodeAlumnos"));
         horaColumn.setCellValueFactory(new PropertyValueFactory<>("hora"));
         aulaColumn.setCellValueFactory(new PropertyValueFactory<>("aula"));
@@ -79,7 +79,6 @@ public class FXMLCursosListController implements Initializable {
                 }
             };
          });
-        //horaColumn.setCellValueFactory(new PropertyValueFactory<Curso, LocalTime>("hora"));
                   
         BooleanBinding noCursoSelected = Bindings.isEmpty(cursosList.getSelectionModel().getSelectedItems());
         this.Borrar.disableProperty().bind(noCursoSelected);
@@ -90,7 +89,7 @@ public class FXMLCursosListController implements Initializable {
     
     @FXML private void añadir(ActionEvent event) throws ParseException {
         Curso newItem = new Curso();
-        boolean okAccion = mainApp.showVentanaCurso(newItem,"Añadir");
+        boolean okAccion = mainApp.loadVentanaCurso(newItem,"Añadir");
         if (okAccion) {
                 cursosList.getItems().add(newItem);
                 cursosList.getSelectionModel().selectLast();
@@ -98,23 +97,24 @@ public class FXMLCursosListController implements Initializable {
     }
     
     @FXML private void matriculas(ActionEvent event) {
-        mainApp.showMatriculas(this.curso);
-        
+        mainApp.loadMatriculas(this.curso);
     }
 
     @FXML private void modificar(ActionEvent event) throws ParseException {
-        boolean okAccion = mainApp.showVentanaCurso(curso,"Modificar");
+        boolean okAccion = mainApp.loadVentanaCurso(curso,"Modificar");
         if (okAccion) cursosList.refresh();
     }
 
     @FXML private void borrar(ActionEvent event) throws ParseException {
-         boolean okAccion = mainApp.showVentanaCurso(curso,"Borrar");
-         if (okAccion) cursosList.getItems().remove(curso);
+        if (mainApp.tieneAlumnosMatriculados(curso)) 
+            mainApp.loadAviso("Borrar Curso","No se puede borrar el curso: "+curso.getTitulodelcurso(),"Para borrar el curso debe primero borrar los alumnos que estuvieran matriculados");
+        else {
+            boolean okAccion = mainApp.loadVentanaCurso(curso,"Borrar");
+            if (okAccion) cursosList.getItems().remove(curso);
+        }
     }
         
-    public void setMain(TestLibrary mainApp) {
-        this.mainApp = mainApp;
-    }
+    public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
     public void initStage(Stage stage, ObservableList<Curso> lc) {
         primaryStage = stage;

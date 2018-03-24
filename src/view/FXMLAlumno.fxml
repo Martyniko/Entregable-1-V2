@@ -38,6 +38,7 @@
                <children>
                   <Label text="DNI:   " GridPane.halignment="RIGHT" />
                   <TextField fx:id="dni" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+                  <Label fx:id="dniMsgError" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label text="Nombre:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets />
@@ -46,20 +47,20 @@
                         <Insets right="10.0" />
                      </padding></Label>
                   <TextField fx:id="nombre" maxWidth="1.7976931348623157E308" prefWidth="195.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label fx:id="nombreMsgError" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label prefHeight="17.0" prefWidth="40.0" text="Edad:" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
                   <TextField fx:id="edad" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label fx:id="edadMsgError" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <Label prefHeight="17.0" prefWidth="63.0" text="Dirección:" GridPane.halignment="RIGHT" GridPane.rowIndex="6" />
                   <TextField fx:id="direccion" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <Label prefHeight="17.0" prefWidth="38.0" text="Foto:" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
-                  <Label fx:id="dniMsgError" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label fx:id="nombreMsgError" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label fx:id="edadMsgError" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <Label fx:id="direccionMsgError" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                  <Label fx:id="imagenMsgError" prefHeight="25.0" prefWidth="244.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                  <TextField fx:id="fechaalta" layoutX="105.0" layoutY="140.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                   <Label layoutX="52.0" layoutY="144.0" prefHeight="17.0" prefWidth="84.0" text="Fecha de alta:" GridPane.halignment="RIGHT" GridPane.rowIndex="8" />
-                  <ImageView fx:id="foto" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                  <TextField fx:id="fechaalta" layoutX="105.0" layoutY="140.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                   <Label fx:id="fechaaltaMsgError" layoutX="120.0" layoutY="184.0" prefHeight="25.0" prefWidth="245.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <Label prefHeight="17.0" prefWidth="38.0" text="Foto:" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
+                  <ImageView fx:id="foto" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="10" />
+                  <Label fx:id="imagenMsgError" prefHeight="25.0" prefWidth="244.0" textFill="#680000" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                  <Button fx:id="bnewFoto" mnemonicParsing="false" onAction="#newFoto" text="Nueva Foto" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
                </children>
                <padding>
                   <Insets left="10.0" right="10.0" />

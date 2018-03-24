@@ -38,7 +38,6 @@ public class FXMLMatriculasListController implements Initializable {
     private TestLibrary mainApp;
     private Curso curso;
     private Matricula matricula;
-    private static  ObservableList<Matricula> matriculasObsList;
     
     @FXML private Button Añadir;
     @FXML private Button Modificar;
@@ -50,7 +49,8 @@ public class FXMLMatriculasListController implements Initializable {
     /**
      * Initializes the controller class.
      */
-    @FXML public void initialize(URL url, ResourceBundle rb) {
+    @FXML@Override
+    public void initialize(URL url, ResourceBundle rb) {
         alumnoColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAlumno().getNombre()));
         fechaColumn.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         fechaColumn.setCellFactory((TableColumn<Matricula, LocalDate> column) -> {
@@ -58,11 +58,8 @@ public class FXMLMatriculasListController implements Initializable {
                @Override
                protected void updateItem(LocalDate item, boolean empty) {
                   super.updateItem(item, empty);
-                  if (item == null || empty) {
-                     setText(null);
-                  } else {
-                    setText(item.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-                  }
+                  if (item == null || empty) {setText(null);} 
+                  else {setText(item.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));}
                }
             };
          });
@@ -74,43 +71,39 @@ public class FXMLMatriculasListController implements Initializable {
     }    
     
     @FXML private void añadir(ActionEvent event) throws ParseException {
-        System.out.println("matricular");
         Matricula newItem = new Matricula();
-        boolean okAccion = mainApp.showVentanaMatricula(curso,newItem,"Añadir");
+        boolean okAccion = mainApp.loadVentanaMatricula(curso,newItem,"Añadir");
         if (okAccion) {
-            if(!mainApp.isAlumnoEnCurso(newItem.getAlumno())){
-                
-                matriculasList.getItems().add(newItem);
+            if(!TestLibrary.isAlumnoEnCurso(newItem.getAlumno())){
+                TestLibrary.matriculasObsListTodas.add(newItem);
+                TestLibrary.matriculasObsList.add(newItem);
                 matriculasList.getSelectionModel().selectLast();
-                this.Añadir.setDisable(mainApp.isCursoCompleto(curso));
-                mainApp.salvar();
+                this.Añadir.setDisable(TestLibrary.isCursoCompleto(curso));
             }
         }
     }
     
     @FXML private void modificar(ActionEvent event) throws ParseException {
-        boolean okAccion = mainApp.showVentanaMatricula(curso,matricula,"Modificar");
+        boolean okAccion = mainApp.loadVentanaMatricula(curso,matricula,"Modificar");
         if (okAccion) matriculasList.refresh();
     }
 
     @FXML private void borrar(ActionEvent event) throws ParseException {
-        boolean okAccion = mainApp.showVentanaMatricula(curso,matricula,"Borrar");
+        boolean okAccion = mainApp.loadVentanaMatricula(curso,matricula,"Borrar");
         if (okAccion) {
-            matriculasList.getItems().remove(matricula);
-            this.Añadir.setDisable(mainApp.isCursoCompleto(curso));
+            TestLibrary.matriculasObsListTodas.remove(matricula);
+            TestLibrary.matriculasObsList.remove(matricula);
+            this.Añadir.setDisable(TestLibrary.isCursoCompleto(curso));
         }
     }
         
-    public void setMain(TestLibrary mainApp) {
-        this.mainApp = mainApp;
-    }
+    public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
-    public void initStage(Stage stage,Curso curso) {
+    public void initStage(Stage stage,Curso curso, ObservableList<Matricula> lm) {
         this.curso=curso;
         this.tituloCurso.setText(this.curso.getTitulodelcurso());
         this.primaryStage = stage;
-        matriculasList.setItems(mainApp.getMatriculasCurso(this.curso));
-        this.Añadir.setDisable(mainApp.isCursoCompleto(curso));
-        
+        matriculasList.setItems(lm);
+        this.Añadir.setDisable(TestLibrary.isCursoCompleto(curso));
     }
 }

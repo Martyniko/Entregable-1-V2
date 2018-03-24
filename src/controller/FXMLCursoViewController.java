@@ -9,19 +9,16 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import modelo.Curso;
 import testlibrary.TestLibrary;
-
 
 /**
  * FXML Controller class
@@ -29,6 +26,7 @@ import testlibrary.TestLibrary;
  * @author impre
  */
 public class FXMLCursoViewController implements Initializable {
+    private TestLibrary mainApp;
     private boolean okAccion = false;
     private Curso curso;
     private String accion;

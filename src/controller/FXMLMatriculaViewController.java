@@ -27,7 +27,6 @@ import modelo.Curso;
 import modelo.Matricula;
 import testlibrary.TestLibrary;
 
-
 /**
  * FXML Controller class
  *
@@ -67,7 +66,7 @@ public class FXMLMatriculaViewController implements Initializable {
         accion=a;
         modalStage.setTitle(accion);
         this.tituloCurso.setText(this.curso.getTitulodelcurso());
-        nombreAlumno.setItems(mainApp.alumnosObsList);
+        nombreAlumno.setItems(TestLibrary.alumnosObsList);
         Callback<ListView<Alumno>, ListCell<Alumno>> factory;
         factory = (ListView<Alumno> lv) -> {
             return new ListCell<Alumno>() {
@@ -86,39 +85,34 @@ public class FXMLMatriculaViewController implements Initializable {
             @Override
             public Alumno fromString(String string) {return null;}
         };
-       nombreAlumno.setConverter(converter);
+        nombreAlumno.setConverter(converter);
 
         if ("Añadir".equals(accion)) {
-            this.fecha.setText(mainApp.parseFechaDMA(LocalDate.now()));
+            this.fecha.setText(TestLibrary.parseFechaDMA(LocalDate.now()));
         }
         else {
             if ("Borrar".equals(accion)) {panelGrid.disableProperty().setValue(true);}
-            this.fecha.setText(mainApp.parseFechaDMA(this.matricula.getFecha()));
+            this.fecha.setText(TestLibrary.parseFechaDMA(this.matricula.getFecha()));
             this.nombreAlumno.getSelectionModel().select(this.matricula.getAlumno());
         }
     }
 
     @FXML private void aceptar(ActionEvent event) throws ParseException {
-        
         if ("Borrar".equals(accion)) 
             okAccion = true;
         else
             if (isInputValid()) {
                 this.matricula.setCurso(curso);
                 this.matricula.setAlumno(alumno);
-                this.matricula.setFecha(mainApp.parseFechaAMD(this.fecha.getText()));
+                this.matricula.setFecha(TestLibrary.parseFechaAMD(this.fecha.getText()));
                 okAccion = true;
             }
         if(okAccion) modalStage.close();
     }
 
-    @FXML private void cancelar(ActionEvent event) {
-        modalStage.close();
-    }
+    @FXML private void cancelar(ActionEvent event) {modalStage.close();}
       
-    public void setMain(TestLibrary mainApp) {
-        this.mainApp = mainApp;
-    }
+    public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
     private boolean isInputValid() {
         Boolean isValid = true;

@@ -12,17 +12,22 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.function.Consumer;
+import java.util.Iterator;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.Alumno;
 import modelo.Curso;
 import modelo.Matricula;
@@ -32,15 +37,15 @@ import modelo.Matricula;
  * @author impre
  */
 public class TestLibrary extends Application {
-    private static FXMLMenuController controladorMenu;
-    private static FXMLAlumnoViewController FXMLAlumnoViewController;
     public static final AccesoaBD acceso= new AccesoaBD();
-    public static final ObservableList<Alumno> alumnosObsList=FXCollections.observableList(acceso.getAlumnos());
-    public static final ObservableList<Curso> cursosObsList=FXCollections.observableList(acceso.getCursos());
-    public static ObservableList<Matricula> matriculasObsList;
+    public static ObservableList<Alumno> alumnosObsList=FXCollections.observableList(acceso.getAlumnos());
+    public static ObservableList<Curso> cursosObsList=FXCollections.observableList(acceso.getCursos());
+    public static ObservableList<Matricula> matriculasObsList=FXCollections.observableList(acceso.getMatriculas());
+    public static ObservableList<Matricula> matriculasObsListTodas=FXCollections.observableList(acceso.getMatriculas());
     
     private Stage primaryStage;
     private BorderPane root;
+    private AnchorPane mPane;
     private AnchorPane alumnosListView;
     private AnchorPane cursosListView;
     private AnchorPane matriculasListView;
@@ -48,123 +53,119 @@ public class TestLibrary extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
-        //acceso = new AccesoaBD();
-        //alumnosObsList.setAll(acceso.getAlumnos());
-        //alumnosList = FXCollections.observableList(acceso.getAlumnos());
-        //CursosList= FXCollections.observableList(acceso.getCursos());
-        //MatriculasList= FXCollections.observableList(acceso.getMatriculas());
-        showMenu(primaryStage);
+        primaryStage.setOnCloseRequest((WindowEvent event) -> {salvar();});
+        loadMenu(primaryStage);
     }
     
-    public void showMenu(Stage stage) throws Exception{
+    public void loadMenu(Stage stage) throws Exception{
         FXMLLoader loader =new FXMLLoader(getClass().getResource("/view/FXMLMenu.fxml"));
         root = (BorderPane) loader.load();
         Scene scene = new Scene(root);
         stage.setTitle("Academia");
         stage.setScene(scene);
-        controladorMenu = loader.<FXMLMenuController>getController();
+        FXMLMenuController controladorMenu = loader.<FXMLMenuController>getController();
         controladorMenu.setMain(this);
         controladorMenu.initStage(stage);
         stage.show();
     }
     
-    public void showAlumnos() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(TestLibrary.class.getResource("/view/FXMLAlumnosList.fxml"));
-            alumnosListView = (AnchorPane) loader.load();
-            root.setCenter(alumnosListView);
-            FXMLAlumnosListController controller = loader.getController();
+    public void loadAlumnos() {
+            FXMLAlumnosListController controller = loadLista("/view/FXMLAlumnosList.fxml").getController();
             controller.setMain(this);
             controller.initStage(primaryStage, alumnosObsList);
-        } catch (IOException e) {e.printStackTrace();}
     }
         
-    public Boolean showVentanaAlumno(Alumno alumno, String accion) throws ParseException {
-        try {
-            Stage estageActual = new Stage();
-            FXMLLoader loader =new FXMLLoader(getClass().getResource("/view/FXMLAlumno.fxml"));
-            Parent roots = (Parent) loader.load();
-            Scene scene = new Scene(roots);
-            estageActual.setScene(scene);
-            estageActual.initModality(Modality.APPLICATION_MODAL);
-            FXMLAlumnoViewController = loader.<FXMLAlumnoViewController>getController();
-            FXMLAlumnoViewController.initStage(estageActual,alumno,accion);
-            estageActual.showAndWait();
-            return FXMLAlumnoViewController.isOkAccion();
-        } catch (IOException e)  {return false;} 
+    public Boolean loadVentanaAlumno(Alumno alumno, String accion) throws ParseException {
+        Stage estageActual = new Stage();
+        FXMLAlumnoViewController controller = loadVentanaModal(estageActual,"/view/FXMLAlumno.fxml").getController();
+        controller.initStage(estageActual,alumno,accion);
+        estageActual.showAndWait();
+        return controller.isOkAccion();
     } 
     
-    public void showCursos() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(TestLibrary.class.getResource("/view/FXMLCursosList.fxml"));
-            cursosListView = (AnchorPane) loader.load();
-            root.setCenter(cursosListView);
-            FXMLCursosListController controller = loader.getController();
+    public void loadCursos() {
+            FXMLCursosListController controller = loadLista("/view/FXMLCursosList.fxml").getController();
             controller.setMain(this);
             controller.initStage(primaryStage, cursosObsList);
-        } catch (IOException e) {e.printStackTrace();}
     }
         
-    public Boolean showVentanaCurso(Curso curso, String accion) throws ParseException {
-        try {
-            Stage estageActual = new Stage();
-            FXMLLoader loader =new FXMLLoader(getClass().getResource("/view/FXMLCurso.fxml"));
-            Parent roots = (Parent) loader.load();
-            Scene scene = new Scene(roots);
-            estageActual.setScene(scene);
-            estageActual.initModality(Modality.APPLICATION_MODAL);
-            FXMLCursoViewController FXMLCursoViewController = loader.<FXMLCursoViewController>getController();
-            FXMLCursoViewController.initStage(estageActual,curso,accion);
-            estageActual.showAndWait();
-            return FXMLCursoViewController.isOkAccion();
-        } catch (IOException e)  {return false;} 
+    public Boolean loadVentanaCurso(Curso curso, String accion) throws ParseException {
+        Stage estageActual = new Stage();
+        FXMLCursoViewController controller = loadVentanaModal(estageActual,"/view/FXMLCurso.fxml").getController();
+        controller.initStage(estageActual,curso,accion);
+        estageActual.showAndWait();
+        return controller.isOkAccion();
     } 
     
-    public void showMatriculas(Curso curso) {
+    public void loadMatriculas(Curso curso) {
+        FXMLMatriculasListController controller = loadLista("/view/FXMLMatriculasList.fxml").getController();
+        controller.setMain(this);
+        matriculasObsList= FXCollections.observableList(acceso.getMatriculasDeCurso(curso));
+        controller.initStage(primaryStage, curso,matriculasObsList);
+    }
+    
+    public Boolean loadVentanaMatricula(Curso curso, Matricula matricula, String accion) throws ParseException {
+        Stage estageActual = new Stage();
+        FXMLMatriculaViewController controller = loadVentanaModal(estageActual,"/view/FXMLMatricula.fxml").getController();
+        controller.setMain(this);
+        controller.initStage(estageActual,curso,matricula,accion);
+        estageActual.showAndWait();
+        return controller.isOkAccion();
+    }
+    
+    public FXMLLoader loadLista(String vista) {
+        FXMLLoader loader =new FXMLLoader(getClass().getResource(vista));
         try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(TestLibrary.class.getResource("/view/FXMLMatriculasList.fxml"));
-            matriculasListView = (AnchorPane) loader.load();
-            root.setCenter(matriculasListView);
-            FXMLMatriculasListController controller = loader.getController();
-            controller.setMain(this);
-            controller.initStage(primaryStage, curso);
+            mPane = (AnchorPane) loader.load();
+            root.setCenter(mPane);
         } catch (IOException e) {e.printStackTrace();}
+        return loader;
     }
-        
-    public Boolean showVentanaMatricula(Curso curso, Matricula matricula, String accion) throws ParseException {
+    
+    public FXMLLoader loadVentanaModal(Stage stage,String vista) {
+        FXMLLoader loader =new FXMLLoader(getClass().getResource(vista));
         try {
-            Stage estageActual = new Stage();
-            FXMLLoader loader =new FXMLLoader(getClass().getResource("/view/FXMLMatricula.fxml"));
-            System.out.println("matricular 1");
             Parent roots = (Parent) loader.load();
-            System.out.println("matricular 2");
-            Scene scene;
-            scene = new Scene(roots);
-            System.out.println("matricular 3");
-            estageActual.setScene(scene);
-            estageActual.initModality(Modality.APPLICATION_MODAL);
-            FXMLMatriculaViewController controller = loader.<FXMLMatriculaViewController>getController();
-            controller.setMain(this);
-            
-            controller.initStage(estageActual,curso,matricula,accion);
-            estageActual.showAndWait();
-            return controller.isOkAccion();
-        } catch (IOException e)  {return false;} 
+            Scene scene = new Scene(roots);
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+        } catch (IOException e) {e.printStackTrace();}
+        return loader;
     }
+    
     public Stage getPrimaryStage() {return primaryStage;}
     
     public static void main(String[] args) {launch(args);}
     
     public static void salvar(){
-        acceso.salvar();
+        acceso.salvar();}
+        
+    public static Boolean AlumnoMatriculado(Alumno alumno) {
+        Boolean isOk = false;
+        if (alumno!=null)
+            for (Matricula matricula : matriculasObsListTodas) {
+                if(alumno.getNombre().equals(matricula.getAlumno().getNombre())) isOk=true;
+            }
+        return isOk;
     }
-    
-    public static ObservableList<Matricula> getMatriculasCurso(Curso curso) {
-        matriculasObsList= FXCollections.observableList(acceso.getMatriculasDeCurso(curso.getTitulodelcurso()));
-        return matriculasObsList;
+        
+    public Boolean tieneAlumnosMatriculados(Curso curso) {
+        Boolean isOk = false;
+        if (curso!=null)
+            for (Matricula matricula: TestLibrary.matriculasObsListTodas) {
+                if(curso.equals(matricula.getCurso())) isOk=true;
+            }
+        return isOk;
+    }
+        
+    public void loadAviso(String titulo,String aviso,String msg){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(aviso);
+        alert.setContentText(msg);
+        ButtonType buttonTypeOk = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+        alert.getButtonTypes().setAll(buttonTypeOk);
+        Optional<ButtonType> result = alert.showAndWait();
     }
     
     public  static Boolean isAlumnoEnCurso(Alumno alumno) {
@@ -177,12 +178,7 @@ public class TestLibrary extends Application {
     
     public static Boolean isCursoCompleto(Curso mcurso) {
         if(matriculasObsList.isEmpty()) return false;
-        else {
-            int ma=mcurso.getNumeroMaximodeAlumnos();
-            int nm=matriculasObsList.size();
-            return (ma == nm);
-        }
-        
+        else return (mcurso.getNumeroMaximodeAlumnos() == matriculasObsList.size());
     }
     
     public static LocalTime parseHoraHM(String hora) throws ParseException{

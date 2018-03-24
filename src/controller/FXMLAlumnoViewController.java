@@ -21,7 +21,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import modelo.Alumno;
@@ -54,9 +53,6 @@ public class FXMLAlumnoViewController implements Initializable {
     @FXML private Button baceptar;
     @FXML private Button bcancelar;
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         edad.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
@@ -65,11 +61,11 @@ public class FXMLAlumnoViewController implements Initializable {
     
     public boolean isOkAccion() {return okAccion;}
     
-    public void initStage(Stage stage, Alumno alumno, String a) throws ParseException {
+    public void initStage(Stage stage, Alumno alumno, String acc) throws ParseException {
         
         modalStage = stage;
         this.alumno=alumno;
-        accion=a;
+        accion=acc;
         modalStage.setTitle(accion);
         
         if ("Añadir".equals(accion)) {
@@ -77,7 +73,7 @@ public class FXMLAlumnoViewController implements Initializable {
             this.nombre.setText("");
             this.edad.setText("");
             this.direccion.setText("");
-            this.fechaalta.setText(mainApp.parseFechaDMA(LocalDate.now()));
+            this.fechaalta.setText(TestLibrary.parseFechaDMA(LocalDate.now()));
         }
         else {
             if ("Borrar".equals(accion)) {panelGrid.disableProperty().setValue(true);}
@@ -86,7 +82,7 @@ public class FXMLAlumnoViewController implements Initializable {
             this.nombre.setText(this.alumno.getNombre());
             this.edad.setText(this.alumno.getEdad()+"");
             this.direccion.setText(this.alumno.getDireccion());
-            this.fechaalta.setText(mainApp.parseFechaDMA(this.alumno.getFechadealta()));
+            this.fechaalta.setText(TestLibrary.parseFechaDMA(this.alumno.getFechadealta()));
             
             this.foto.setImage(this.alumno.getFoto());
         }
@@ -102,17 +98,14 @@ public class FXMLAlumnoViewController implements Initializable {
                 this.alumno.setNombre(nombre.getText());
                 this.alumno.setDireccion(direccion.getText());
                 this.alumno.setFoto(foto.getImage());
-                this.alumno.setFechadealta(mainApp.parseFechaAMD(this.fechaalta.getText()));
-                
+                this.alumno.setFechadealta(TestLibrary.parseFechaAMD(this.fechaalta.getText()));
                 this.alumno.setEdad(Integer.parseInt(edad.getText()));
                 okAccion = true;
             }
         if(okAccion) modalStage.close();
     }
 
-    @FXML private void cancelar(ActionEvent event) {
-        modalStage.close();
-    }
+    @FXML private void cancelar(ActionEvent event) {modalStage.close();}
     
     public void newFoto(){
         JFileChooser jf = new JFileChooser();
@@ -129,9 +122,7 @@ public class FXMLAlumnoViewController implements Initializable {
         }
     }
         
-    public void setMain(TestLibrary mainApp) {
-        this.mainApp = mainApp;
-    }
+    public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
     private boolean isInputValid() {
         Boolean isValid = true;

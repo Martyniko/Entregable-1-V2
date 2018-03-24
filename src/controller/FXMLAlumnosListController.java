@@ -51,7 +51,8 @@ public class FXMLAlumnosListController implements Initializable {
     /**
      * Initializes the controller class.
      */
-    @FXML public void initialize(URL url, ResourceBundle rb) {
+    @FXML@Override
+    public void initialize(URL url, ResourceBundle rb) {
         dniColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDni()));
         nombreColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNombre()));
         //edadColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getEdad()));
@@ -71,7 +72,7 @@ public class FXMLAlumnosListController implements Initializable {
                }
             };
          });
-        fotoColumn.setCellValueFactory(new PropertyValueFactory<Alumno, Image>("foto"));
+        fotoColumn.setCellValueFactory(new PropertyValueFactory<>("foto"));
         fotoColumn.setCellFactory(columna -> {
             return new TableCell<Alumno, Image> () {
                 @Override
@@ -84,7 +85,6 @@ public class FXMLAlumnosListController implements Initializable {
                 }
             };
         });        
-        
         BooleanBinding noAlumnoSelected = Bindings.isEmpty(alumnosList.getSelectionModel().getSelectedItems());
         this.Borrar.disableProperty().bind(noAlumnoSelected);
         this.Modificar.disableProperty().bind(noAlumnoSelected);
@@ -93,7 +93,7 @@ public class FXMLAlumnosListController implements Initializable {
     
     @FXML private void añadir(ActionEvent event) throws ParseException {
         Alumno newItem = new Alumno();
-        boolean okAccion = mainApp.showVentanaAlumno(newItem,"Añadir");
+        boolean okAccion = mainApp.loadVentanaAlumno(newItem,"Añadir");
         if (okAccion) {
                 alumnosList.getItems().add(newItem);
                 alumnosList.getSelectionModel().selectLast();
@@ -101,18 +101,20 @@ public class FXMLAlumnosListController implements Initializable {
     }
     
     @FXML private void modificar(ActionEvent event) throws ParseException {
-        boolean okAccion = mainApp.showVentanaAlumno(alumno,"Modificar");
+        boolean okAccion = mainApp.loadVentanaAlumno(alumno,"Modificar");
         if (okAccion) alumnosList.refresh();
     }
 
     @FXML private void borrar(ActionEvent event) throws ParseException {
-         boolean okAccion = mainApp.showVentanaAlumno(alumno,"Borrar");
-         if (okAccion) alumnosList.getItems().remove(alumno);
+        if (TestLibrary.AlumnoMatriculado(alumno))
+           mainApp.loadAviso("Borrar Alumno","No se puede borrar el alumno "+alumno.getNombre(),"Para borrar el alumno debe primero borrarlo de los cursos en los que estuviera matriculado");
+        else {
+            boolean okAccion = mainApp.loadVentanaAlumno(alumno,"Borrar");
+            if (okAccion) alumnosList.getItems().remove(alumno);
+        } 
     }
         
-    public void setMain(TestLibrary mainApp) {
-        this.mainApp = mainApp;
-    }
+    public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
     public void initStage(Stage stage, ObservableList<Alumno> la) {
         primaryStage = stage;

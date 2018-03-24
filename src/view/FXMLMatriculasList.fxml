@@ -11,15 +11,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLMatriculasListController">
-    <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="463.0" prefWidth="600.0">
+<AnchorPane id="AnchorPane" prefHeight="463.0" prefWidth="495.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLMatriculasListController">
+    <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="463.0" prefWidth="466.0">
        <center>
-          <TableView fx:id="matriculasList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="338.0" prefWidth="561.0" BorderPane.alignment="CENTER">
+          <TableView fx:id="matriculasList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="338.0" prefWidth="482.0" BorderPane.alignment="CENTER">
              <BorderPane.margin>
              </BorderPane.margin>
              <columns>
-                <TableColumn fx:id="alumnoColumn" maxWidth="1.7976931348623157E308" prefWidth="462.0" text="Alumnos" />
-                <TableColumn fx:id="fechaColumn" minWidth="0.0" prefWidth="97.0" text="Fecha" />
+                <TableColumn fx:id="alumnoColumn" maxWidth="1.7976931348623157E308" prefWidth="396.0" text="Alumnos" />
+                <TableColumn fx:id="fechaColumn" minWidth="0.0" prefWidth="83.0" text="Fecha" />
              </columns>
              <columnResizePolicy>
                 </columnResizePolicy>
