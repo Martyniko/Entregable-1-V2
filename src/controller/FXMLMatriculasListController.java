@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +25,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import modelo.Alumno;
 import modelo.Curso;
 import modelo.Matricula;
 import testlibrary.TestLibrary;
@@ -38,6 +40,7 @@ public class FXMLMatriculasListController implements Initializable {
     private TestLibrary mainApp;
     private Curso curso;
     private Matricula matricula;
+    private ObservableList<Matricula> matriculasObsList;
     
     @FXML private Button Añadir;
     @FXML private Button Modificar;
@@ -74,11 +77,13 @@ public class FXMLMatriculasListController implements Initializable {
         Matricula newItem = new Matricula();
         boolean okAccion = mainApp.loadVentanaMatricula(curso,newItem,"Añadir");
         if (okAccion) {
-            if(!TestLibrary.isAlumnoEnCurso(newItem.getAlumno())){
+            if(isAlumnoEnCurso(newItem.getAlumno()))
+              mainApp.loadAviso("Matricular Alumno","No se puede matricular el alumno "+newItem.getAlumno().getNombre(),"Este alumno ya está matriculado en este curso");
+            else {
                 TestLibrary.matriculasObsListTodas.add(newItem);
-                TestLibrary.matriculasObsList.add(newItem);
+                matriculasList.getItems().add(newItem);
                 matriculasList.getSelectionModel().selectLast();
-                this.Añadir.setDisable(TestLibrary.isCursoCompleto(curso));
+                this.Añadir.setDisable(isCursoCompleto(curso));
             }
         }
     }
@@ -92,18 +97,32 @@ public class FXMLMatriculasListController implements Initializable {
         boolean okAccion = mainApp.loadVentanaMatricula(curso,matricula,"Borrar");
         if (okAccion) {
             TestLibrary.matriculasObsListTodas.remove(matricula);
-            TestLibrary.matriculasObsList.remove(matricula);
-            this.Añadir.setDisable(TestLibrary.isCursoCompleto(curso));
+            matriculasList.getItems().remove(matricula);
+            this.Añadir.setDisable(isCursoCompleto(curso));
         }
     }
-        
+
+    private Boolean isAlumnoEnCurso(Alumno alumno) {
+        Boolean isOk=false;
+        for (Matricula mm: matriculasObsList) {
+            if(alumno.getDni().equals(mm.getAlumno().getDni())) isOk=true;
+        }
+        return isOk;
+    }
+    
+    private Boolean isCursoCompleto(Curso mcurso) {
+        if(matriculasObsList.isEmpty()) return false;
+        else return (mcurso.getNumeroMaximodeAlumnos() == matriculasObsList.size());
+    }    
+    
     public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
-    public void initStage(Stage stage,Curso curso, ObservableList<Matricula> lm) {
+    public void initStage(Stage stage,Curso curso) {
         this.curso=curso;
         this.tituloCurso.setText(this.curso.getTitulodelcurso());
         this.primaryStage = stage;
-        matriculasList.setItems(lm);
-        this.Añadir.setDisable(TestLibrary.isCursoCompleto(curso));
+        matriculasObsList= FXCollections.observableList(TestLibrary.acceso.getMatriculasDeCurso(curso));
+        matriculasList.setItems(matriculasObsList);
+        this.Añadir.setDisable(isCursoCompleto(curso));
     }
 }
