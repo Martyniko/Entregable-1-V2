@@ -102,6 +102,29 @@ public class FXMLCursosListController implements Initializable {
         mainApp.loadMatriculas(this.curso);
     }
     
+    @FXML private void modificar(ActionEvent event) throws ParseException {
+        Curso newCurso=new Curso();
+        changeCurso(newCurso,curso);
+        boolean okAccion = mainApp.loadVentanaCurso(newCurso,"Modificar");
+        if (okAccion) {
+            TestLibrary.matriculasObsListTodas.stream().filter((matricula) -> (curso.equals(matricula.getCurso()))).forEachOrdered((matricula) -> {
+                changeCurso(matricula.getCurso(),newCurso);
+            });
+            changeCurso(curso,newCurso);
+            cursosList.refresh();
+        }
+    }
+    
+    private void changeCurso(Curso chgCurso,Curso newCurso){
+        chgCurso.setTitulodelcurso(newCurso.getTitulodelcurso());
+        chgCurso.setProfesorAsignado(newCurso.getProfesorAsignado());
+        chgCurso.setNumeroMaximodeAlumnos(newCurso.getNumeroMaximodeAlumnos());
+        chgCurso.setFechainicio(newCurso.getFechainicio());
+        chgCurso.setFechafin(newCurso.getFechafin());
+        chgCurso.setHora(newCurso.getHora());
+        chgCurso.setDiasimparte(newCurso.getDiasimparte());
+        chgCurso.setAula(newCurso.getAula());
+    }
     
     @FXML private void borrar(ActionEvent event) throws ParseException {
         if (TestLibrary.tieneAlumnosMatriculados(curso)) 
