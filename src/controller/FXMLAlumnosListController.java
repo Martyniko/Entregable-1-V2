@@ -100,6 +100,27 @@ public class FXMLAlumnosListController implements Initializable {
         }
     }
     
+    @FXML private void modificar(ActionEvent event) throws ParseException {
+        Alumno newAlumno=new Alumno();
+        changeAlumno(newAlumno, alumno);
+        boolean okAccion = mainApp.loadVentanaAlumno(newAlumno,"Modificar");
+        if (okAccion) {
+            TestLibrary.matriculasObsListTodas.stream().filter((matricula) -> (alumno.equals(matricula.getAlumno()))).forEachOrdered((matricula) -> {
+                changeAlumno(matricula.getAlumno(),newAlumno);
+            });
+            changeAlumno(alumno,newAlumno);
+            alumnosList.refresh();
+        }
+    }
+    
+    private void changeAlumno(Alumno chgAlumno,Alumno newAlumno){
+        chgAlumno.setDni(newAlumno.getDni());
+        chgAlumno.setNombre(newAlumno.getNombre());
+        chgAlumno.setEdad(newAlumno.getEdad());
+        chgAlumno.setDireccion(newAlumno.getDireccion());
+        chgAlumno.setFechadealta(newAlumno.getFechadealta());
+        chgAlumno.setFoto(newAlumno.getFoto());
+    }
     
     @FXML private void borrar(ActionEvent event) throws ParseException {
         if (TestLibrary.AlumnoMatriculado(alumno))
