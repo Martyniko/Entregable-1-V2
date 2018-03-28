@@ -123,14 +123,23 @@ public class FXMLAlumnosListController implements Initializable {
     }
     
     @FXML private void borrar(ActionEvent event) throws ParseException {
-        if (TestLibrary.AlumnoMatriculado(alumno))
+        if (AlumnoMatriculado(alumno))
            mainApp.loadAviso("Borrar Alumno","No se puede borrar el alumno "+alumno.getNombre(),"Para borrar el alumno debe primero borrarlo de los cursos en los que estuviera matriculado");
         else {
             boolean okAccion = mainApp.loadVentanaAlumno(alumno,"Borrar");
             if (okAccion) alumnosList.getItems().remove(alumno);
         } 
     }
-        
+    
+    public Boolean AlumnoMatriculado(Alumno alumno) {
+        Boolean isOk = false;
+        if (alumno!=null)
+            for (Matricula mm : TestLibrary.matriculasObsListTodas) {
+                if(alumno.getDni().equals(mm.getAlumno().getDni())) isOk=true;
+            }
+        return isOk;
+    }
+    
     public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
     public void initStage(Stage stage, ObservableList<Alumno> la) {

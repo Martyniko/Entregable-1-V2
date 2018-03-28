@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="581.0" prefWidth="983.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLMenuController">
+<BorderPane prefHeight="581.0" prefWidth="1058.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLMenuController">
    <bottom>
       <Label fx:id="estado" prefHeight="17.0" prefWidth="962.0" BorderPane.alignment="CENTER">
          <font>

@@ -7,17 +7,26 @@ package controller;
 
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import modelo.Curso;
+import modelo.Dias;
+import modeloaux.Item;
 import testlibrary.TestLibrary;
 
 /**
@@ -38,23 +47,33 @@ public class FXMLCursoViewController implements Initializable {
     @FXML private TextField hora;
     @FXML private TextField fechainicio;
     @FXML private TextField fechafin;
-    @FXML private TextField dias;
+    @FXML private ListView<Item> lwdias;
     @FXML private TextField aula;
     @FXML private Label tituloMsgError;
     @FXML private Label profesorMsgError;
     @FXML private Label maxalumnosMsgError;
     @FXML private Label horaMsgError;
+    @FXML private Label diasMsgError;
     @FXML private Label fechainicioMsgError;
     @FXML private Label fechafinMsgError;
     @FXML private Label imagenMsgError;
     @FXML private Button baceptar;
     @FXML private Button bcancelar;
 
+    private ObservableList<Item> diasImparte=FXCollections.observableArrayList();
+    private ArrayList<Dias> nDias=new ArrayList<Dias>();
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        iniDias();
+        lwdias.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        lwdias.setCellFactory(CheckBoxListCell.forListView(new Callback<Item, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(Item item) {return item.onProperty();}
+        }));
+
         maxalumnos.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (!newValue.matches("\\d*")) maxalumnos.setText(newValue.replaceAll("[^\\d]", "")); });
     }    
@@ -62,7 +81,6 @@ public class FXMLCursoViewController implements Initializable {
     public boolean isOkAccion() {return okAccion;}
     
     public void initStage(Stage stage, Curso curso, String a) {
-        
         modalStage = stage;
         this.curso=curso;
         accion=a;
@@ -75,29 +93,45 @@ public class FXMLCursoViewController implements Initializable {
             this.fechainicio.setText("");
             this.fechafin.setText("");
             this.hora.setText("");
-            this.dias.setText("");
             this.aula.setText("");
-            
-        }
-        else {
+        } else {
             if ("Borrar".equals(accion)) {panelGrid.disableProperty().setValue(true);}
-            
             this.titulo.setText(this.curso.getTitulodelcurso());
             this.profesor.setText(this.curso.getProfesorAsignado());
             this.maxalumnos.setText(this.curso.getNumeroMaximodeAlumnos()+"");
             this.fechainicio.setText(TestLibrary.parseFechaDMA(this.curso.getFechainicio()));
             this.fechafin.setText(TestLibrary.parseFechaDMA(this.curso.getFechafin()));
-            
+            loadDias(this.curso.getDiasimparte());
             this.hora.setText(""+this.curso.getHora());
             this.aula.setText(this.curso.getAula());
         }
     }
-
+    
+    private void iniDias(){
+        diasImparte.add(new Item("Lunes"));
+        diasImparte.add(new Item("Martes"));
+        diasImparte.add(new Item("Miercoles"));
+        diasImparte.add(new Item("Jueves"));
+        diasImparte.add(new Item("Viernes"));
+        diasImparte.add(new Item("Sabado"));
+        diasImparte.add(new Item("Domingo"));
+        lwdias.setItems(diasImparte);
+    }
+    
+    private void loadDias(ArrayList<Dias> inDias){
+        if(inDias!=null)  inDias.forEach((dia) -> {diasImparte.get(dia.ordinal()).setOn(true);});
+    }
+    
+    private void saveDias(){
+        diasImparte.forEach((dia)->{if (dia.isOn()) nDias.add(Dias.valueOf(dia.getName()));});
+    }
+    
     @FXML private void aceptar(ActionEvent event) throws ParseException {
         
         if ("Borrar".equals(accion)) 
             okAccion = true;
         else
+            saveDias();
             if (isInputValid()) {
                 this.curso.setTitulodelcurso(titulo.getText());
                 this.curso.setProfesorAsignado(profesor.getText());
@@ -106,14 +140,13 @@ public class FXMLCursoViewController implements Initializable {
                 this.curso.setHora(TestLibrary.parseHoraHM(hora.getText()));
                 this.curso.setAula(aula.getText());
                 this.curso.setNumeroMaximodeAlumnos(Integer.parseInt(maxalumnos.getText()));
+                this.curso.setDiasimparte(nDias);
                 okAccion = true;
             }
         if(okAccion) modalStage.close();
     }
-
-    @FXML private void cancelar(ActionEvent event) {
-        modalStage.close();
-    }
+        
+    @FXML private void cancelar(ActionEvent event) {modalStage.close();}
     
     private boolean isInputValid() {
         Boolean isValid = true;
@@ -133,19 +166,24 @@ public class FXMLCursoViewController implements Initializable {
             isValid=false;
         } else maxalumnosMsgError.setText("");
         
-        if (hora.getText() == null || hora.getText().length() == 0) {
+        if (!TestLibrary.isHora(hora.getText()) || hora.getText() == null || hora.getText().length() == 0) {
             horaMsgError.setText("Hora No valido! ");
-            //isValid=false;
+            isValid=false;
         } else horaMsgError.setText("");
         
-        if (fechainicio.getText() == null || fechainicio.getText().length() == 0) {
+        if (nDias.isEmpty()) {
+            diasMsgError.setText("Marque los días que se imparte");
+            isValid=false;
+        } else diasMsgError.setText("");
+        
+        if (!TestLibrary.isFecha(fechainicio.getText()) || fechainicio.getText() == null || fechainicio.getText().length() == 0) {
             fechainicioMsgError.setText("Fecha de inicio No valido! ");
-            //isValid=false;
+            isValid=false;
         } else fechainicioMsgError.setText("");
         
-        if (fechafin.getText() == null || fechafin.getText().length() == 0) {
+        if (!TestLibrary.isFecha(fechafin.getText()) || fechafin.getText() == null || fechafin.getText().length() == 0) {
             fechafinMsgError.setText("Fecha de inicio No valido! ");
-            //isValid=false;
+            isValid=false;
         } else fechafinMsgError.setText("");
                       
         return isValid;

@@ -147,9 +147,9 @@ public class FXMLAlumnoViewController implements Initializable {
             isValid=false;
         } else direccionMsgError.setText("");
         
-        if (fechaalta.getText() == null || fechaalta.getText().length() == 0) {
+        if (!TestLibrary.isFecha(fechaalta.getText()) || fechaalta.getText() == null || fechaalta.getText().length() == 0) {
             fechaaltaMsgError.setText("Fecha de alta No valido! ");
-            //isValid=false;
+            isValid=false;
         } else fechaaltaMsgError.setText("");
                       
         return isValid;

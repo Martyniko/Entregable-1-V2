@@ -79,6 +79,7 @@ public class FXMLMatriculaViewController implements Initializable {
         };
         nombreAlumno.setCellFactory(factory);
         nombreAlumno.setButtonCell(factory.call(null));
+        if ("Modificar".equals(accion)) nombreAlumno.setDisable(true);
         StringConverter<Alumno> converter = new StringConverter<Alumno>() {
             @Override
             public String toString(Alumno object) {return object.getNombre();}
@@ -114,12 +115,35 @@ public class FXMLMatriculaViewController implements Initializable {
       
     public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
+    public static boolean cursoCompatible(Curso curso, Alumno alumno) {
+        Boolean isOk =true;
+        Curso mc;
+        if (alumno!=null)
+            for (Matricula mm : TestLibrary.matriculasObsListTodas) {
+                if(alumno.getDni().equals(mm.getAlumno().getDni())) {
+                    mc=mm.getCurso();
+                    if (mc.getHora().equals(curso.getHora()) && mc.getDiasimparte().equals(curso.getDiasimparte()))
+                        isOk=false;
+                }
+            }
+        return isOk;
+    }
+    
     private boolean isInputValid() {
         Boolean isValid = true;
+        if(!"Modificar".equals(accion))
+        if (nombreAlumno.getSelectionModel().getSelectedIndex()==-1) {
+            nombreAlumnoMsgError.setText("No se ha seleccionado ningún alumno! ");
+            isValid=false;
+        } else 
+            if (!cursoCompatible(curso, nombreAlumno.getSelectionModel().getSelectedItem())) {
+                nombreAlumnoMsgError.setText("El alumno tiene otros cursos en este horario");
+                isValid=false;
+            } else nombreAlumnoMsgError.setText("");
         
-        if (fecha.getText() == null || fecha.getText().length() == 0) {
+        if (!TestLibrary.isFecha(fecha.getText()) || fecha.getText() == null || fecha.getText().length() == 0) {
             fechaMsgError.setText("Fecha de alta No valido! ");
-            //isValid=false;
+            isValid=false;
         }
         else fechaMsgError.setText("");
                       

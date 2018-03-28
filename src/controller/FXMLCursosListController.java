@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,7 +25,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import modelo.Alumno;
 import modelo.Curso;
+import modelo.Matricula;
 import testlibrary.TestLibrary;
 
 /**
@@ -36,11 +39,19 @@ public class FXMLCursosListController implements Initializable {
     private Stage primaryStage;
     private TestLibrary mainApp;
     private Curso curso;
-   
+    
+    private Matricula matricula;
+    private ObservableList<Matricula> matriculasObsList;
+    BooleanBinding noCursoSelected;
+    @FXML private Button mAñadir;
+    @FXML private Button mModificar;
+    @FXML private Button mBorrar;
+    @FXML private TableView<Matricula> matriculasList;
+    @FXML private TableColumn<Matricula, String> alumnoColumn;
+    @FXML private TableColumn<Matricula, LocalDate> fechaColumn;
     @FXML private Button Modificar;
     @FXML private Button Borrar;
     @FXML private Button Añadir;
-    @FXML private Button Matriculados;
     @FXML private TableView<Curso> cursosList;
     @FXML private TableColumn<Curso, String> aulaColumn;
     @FXML private TableColumn<Curso, String> diasColumn;
@@ -82,11 +93,15 @@ public class FXMLCursosListController implements Initializable {
             };
          });
                   
-        BooleanBinding noCursoSelected = Bindings.isEmpty(cursosList.getSelectionModel().getSelectedItems());
+        noCursoSelected = Bindings.isEmpty(cursosList.getSelectionModel().getSelectedItems());
+        BooleanBinding cursoCompleto;
+        
         this.Borrar.disableProperty().bind(noCursoSelected);
         this.Modificar.disableProperty().bind(noCursoSelected);
-        this.Matriculados.disableProperty().bind(noCursoSelected);
-        cursosList.getSelectionModel().selectedItemProperty().addListener((o, oldval, newval) -> {curso = newval;});
+        cursosList.getSelectionModel().selectedItemProperty().addListener((o, oldval, newval) -> {curso = newval;verMatriculas();});
+        this.mBorrar.disableProperty().bind(noCursoSelected);
+        this.mModificar.disableProperty().bind(noCursoSelected);
+//        //this.mAñadir.disableProperty().bind(noCursoSelected);
     }    
     
     @FXML private void añadir(ActionEvent event) throws ParseException {
@@ -96,10 +111,6 @@ public class FXMLCursosListController implements Initializable {
                 cursosList.getItems().add(newItem);
                 cursosList.getSelectionModel().selectLast();
         }
-    }
-    
-    @FXML private void matriculas(ActionEvent event) {
-        mainApp.loadMatriculas(this.curso);
     }
     
     @FXML private void modificar(ActionEvent event) throws ParseException {
@@ -127,14 +138,94 @@ public class FXMLCursosListController implements Initializable {
     }
     
     @FXML private void borrar(ActionEvent event) throws ParseException {
-        if (TestLibrary.tieneAlumnosMatriculados(curso)) 
+        if (tieneAlumnosMatriculados(curso)) 
             mainApp.loadAviso("Borrar Curso","No se puede borrar el curso: "+curso.getTitulodelcurso(),"Para borrar el curso debe primero borrar los alumnos que estuvieran matriculados");
         else {
             boolean okAccion = mainApp.loadVentanaCurso(curso,"Borrar");
             if (okAccion) cursosList.getItems().remove(curso);
         }
     }
+    
+    @FXML private void mañadir(ActionEvent event) throws ParseException {
+        if (isCursoCompleto(curso)) 
+            mainApp.loadAviso("Curso Completo","No se puede matricular alumnos. El curso "+curso.getTitulodelcurso()," está completo");
+        else {    
+            Matricula newItem = new Matricula();
+            boolean okAccion = mainApp.loadVentanaMatricula(curso,newItem,"Añadir");
+            if (okAccion) {
+                if(isAlumnoEnCurso(newItem.getAlumno()))
+                  mainApp.loadAviso("Matricular Alumno","No se puede matricular el alumno "+newItem.getAlumno().getNombre(),"Este alumno ya está matriculado en este curso");
+                else {
+                    TestLibrary.matriculasObsListTodas.add(newItem);
+                    matriculasList.getItems().add(newItem);
+                    matriculasList.getSelectionModel().selectLast();
+                    this.mAñadir.setDisable(isCursoCompleto(curso));
+                }
+            }
+        }
+    }
+    
+    @FXML private void mmodificar(ActionEvent event) throws ParseException {
+        boolean okAccion = mainApp.loadVentanaMatricula(curso,matricula,"Modificar");
+        if (okAccion) matriculasList.refresh();
+    }
+
+    @FXML private void mborrar(ActionEvent event) throws ParseException {
+        boolean okAccion = mainApp.loadVentanaMatricula(curso,matricula,"Borrar");
+        if (okAccion) {
+            TestLibrary.matriculasObsListTodas.remove(matricula);
+            matriculasList.getItems().remove(matricula);
+            this.Añadir.setDisable(isCursoCompleto(curso));
+        }
+    }
+            
+    public Boolean tieneAlumnosMatriculados(Curso curso) {
+        Boolean isOk = false;
+        if (curso!=null)
+            for (Matricula mm: TestLibrary.matriculasObsListTodas) {
+                if(curso.equals(mm.getCurso())) isOk=true;
+            }
+        return isOk;
+    }
+    
+    private Boolean isAlumnoEnCurso(Alumno alumno) {
+        Boolean isOk=false;
+        for (Matricula mm: matriculasObsList) {
+            if(alumno.getDni().equals(mm.getAlumno().getDni())) isOk=true;
+//            if(alumno.equals(mm.getAlumno())) isOk=true;
+        }
+        return isOk;
+    }
+    
+    private Boolean isCursoCompleto(Curso mcurso) {
+        if(matriculasObsList.isEmpty()) return false;
+        else return (mcurso.getNumeroMaximodeAlumnos() == matriculasObsList.size());
+    }    
+    
+    public void verMatriculas() {
         
+        alumnoColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAlumno().getNombre()));
+        fechaColumn.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+        fechaColumn.setCellFactory((TableColumn<Matricula, LocalDate> column) -> {
+            return new TableCell<Matricula, LocalDate>() {
+               @Override
+               protected void updateItem(LocalDate item, boolean empty) {
+                  super.updateItem(item, empty);
+                  if (item == null || empty) {setText(null);} 
+                  else {setText(item.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));}
+               }
+            };
+         });
+        
+        BooleanBinding noMatriculaSelected = Bindings.isEmpty(matriculasList.getSelectionModel().getSelectedItems());
+        this.mBorrar.disableProperty().bind(noCursoSelected.or(noMatriculaSelected));
+        this.mModificar.disableProperty().bind(noCursoSelected.or(noMatriculaSelected));
+        matriculasList.getSelectionModel().selectedItemProperty().addListener((o, oldval, newval) -> {matricula = newval;});
+        matriculasObsList= FXCollections.observableList(TestLibrary.acceso.getMatriculasDeCurso(curso));
+        matriculasList.setItems(matriculasObsList);
+        this.mAñadir.setDisable(isCursoCompleto(curso));
+    }
+    
     public void setMain(TestLibrary mainApp) {this.mainApp = mainApp;}
     
     public void initStage(Stage stage, ObservableList<Curso> lc) {

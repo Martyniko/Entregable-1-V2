@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -29,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import modelo.Alumno;
 import modelo.Curso;
+import modelo.Dias;
 import modelo.Matricula;
 
 /**
@@ -95,12 +97,6 @@ public class TestLibrary extends Application {
         return controller.isOkAccion();
     } 
     
-    public void loadMatriculas(Curso curso) {
-        FXMLMatriculasListController controller = loadLista("/view/FXMLMatriculasList.fxml").getController();
-        controller.setMain(this);
-        controller.initStage(primaryStage, curso);
-    }
-    
     public Boolean loadVentanaMatricula(Curso curso, Matricula matricula, String accion) throws ParseException {
         Stage estageActual = new Stage();
         FXMLMatriculaViewController controller = loadVentanaModal(estageActual,"/view/FXMLMatricula.fxml").getController();
@@ -136,25 +132,15 @@ public class TestLibrary extends Application {
     
     public static void salvar(){
         acceso.salvar();}
-        
-    public static Boolean AlumnoMatriculado(Alumno alumno) {
-        Boolean isOk = false;
-        if (alumno!=null)
-            for (Matricula matricula : matriculasObsListTodas) {
-                if(alumno.getNombre().equals(matricula.getAlumno().getNombre())) isOk=true;
-            }
-        return isOk;
+    
+    public static String diasToString(ArrayList<Dias> dias) {
+        String result="";
+        if (dias!=null)
+            result = dias.stream().map((dia) -> dia.toString()+" ").reduce(result, String::concat);
+        return result;
     }
-        
-    public Boolean tieneAlumnosMatriculados(Curso curso) {
-        Boolean isOk = false;
-        if (curso!=null)
-            for (Matricula matricula: TestLibrary.matriculasObsListTodas) {
-                if(curso.equals(matricula.getCurso())) isOk=true;
-            }
-        return isOk;
-    }
-        
+    
+         
     public void loadAviso(String titulo,String aviso,String msg){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(titulo);
@@ -174,7 +160,7 @@ public class TestLibrary extends Application {
         String ExpReg ="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
         return (horaAValidar.matches(ExpReg));
     }
-    
+        
     public static LocalTime parseHoraHM(String hora) throws ParseException{
         return LocalTime.parse(hora, DateTimeFormatter.ofPattern("HH:mm"));
     }
