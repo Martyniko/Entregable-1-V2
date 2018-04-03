@@ -105,9 +105,8 @@ public class FXMLAlumnosListController implements Initializable {
         changeAlumno(newAlumno, alumno);
         boolean okAccion = mainApp.loadVentanaAlumno(newAlumno,"Modificar");
         if (okAccion) {
-            TestLibrary.matriculasObsListTodas.stream().filter((matricula) -> (alumno.equals(matricula.getAlumno()))).forEachOrdered((matricula) -> {
-                changeAlumno(matricula.getAlumno(),newAlumno);
-            });
+            TestLibrary.matriculasObsListTodas.stream().filter((matricula) -> (alumno.equals(matricula.getAlumno()))).forEachOrdered((matricula) -> 
+                {changeAlumno(matricula.getAlumno(),newAlumno);});
             changeAlumno(alumno,newAlumno);
             alumnosList.refresh();
         }

@@ -40,7 +40,7 @@
                   </MenuItem>
                   <MenuItem fx:id="mCursos" mnemonicParsing="false" onAction="#irACursos" text="Cursos">
                      <accelerator>
-                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="UP" code="K" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
                </items>

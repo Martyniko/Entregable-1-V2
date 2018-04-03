@@ -127,27 +127,27 @@ public class FXMLAlumnoViewController implements Initializable {
     private boolean isInputValid() {
         Boolean isValid = true;
         
-        if (dni.getText() == null || dni.getText().length() == 0) {
+        if (TestLibrary.isVacio(dni)) {
             dniMsgError.setText("Dni No valido! ");
             isValid=false;
         } else dniMsgError.setText("");
         
-        if (nombre.getText() == null || nombre.getText().length() == 0) {
+        if (TestLibrary.isVacio(nombre)) {
             nombreMsgError.setText("Nombre No valido! ");
             isValid=false;
         } else nombreMsgError.setText("");
         
-        if (edad.getText() == null || edad.getText().length() == 0) {
+        if (TestLibrary.isVacio(edad)) {
             edadMsgError.setText("Edad No valido! ");
             isValid=false;
         } else edadMsgError.setText("");
         
-        if (direccion.getText() == null || direccion.getText().length() == 0) {
+        if (TestLibrary.isVacio(direccion)) {
             direccionMsgError.setText("Direccion No valido! ");
             isValid=false;
         } else direccionMsgError.setText("");
         
-        if (!TestLibrary.isFecha(fechaalta.getText()) || fechaalta.getText() == null || fechaalta.getText().length() == 0) {
+        if (TestLibrary.isVacio(fechaalta) || !TestLibrary.isFecha(fechaalta.getText())) {
             fechaaltaMsgError.setText("Fecha de alta No valido! ");
             isValid=false;
         } else fechaaltaMsgError.setText("");

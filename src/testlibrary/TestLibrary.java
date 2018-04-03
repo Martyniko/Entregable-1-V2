@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -135,7 +136,7 @@ public class TestLibrary extends Application {
     
     public static String diasToString(ArrayList<Dias> dias) {
         String result="";
-        if (dias!=null)
+        if (dias!=null) 
             result = dias.stream().map((dia) -> dia.toString()+" ").reduce(result, String::concat);
         return result;
     }
@@ -159,6 +160,10 @@ public class TestLibrary extends Application {
     public static boolean isHora(String horaAValidar) {
         String ExpReg ="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$";
         return (horaAValidar.matches(ExpReg));
+    }
+    
+    public static boolean isVacio(TextField campo) {
+        return (campo.getText() == null || campo.getText().length() == 0);
     }
         
     public static LocalTime parseHoraHM(String hora) throws ParseException{

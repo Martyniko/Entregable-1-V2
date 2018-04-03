@@ -60,8 +60,8 @@ public class FXMLCursoViewController implements Initializable {
     @FXML private Button baceptar;
     @FXML private Button bcancelar;
 
-    private ObservableList<Item> diasImparte=FXCollections.observableArrayList();
-    private ArrayList<Dias> nDias=new ArrayList<Dias>();
+    private final ObservableList<Item> diasImparte=FXCollections.observableArrayList();
+    private final ArrayList<Dias> nDias=new ArrayList<>();
     /**
      * Initializes the controller class.
      */
@@ -151,22 +151,22 @@ public class FXMLCursoViewController implements Initializable {
     private boolean isInputValid() {
         Boolean isValid = true;
         
-        if (titulo.getText() == null || titulo.getText().length() == 0) {
+        if (TestLibrary.isVacio(titulo)) {
             tituloMsgError.setText("Título No valido! ");
             isValid=false;
         } else tituloMsgError.setText("");
         
-        if (profesor.getText() == null || profesor.getText().length() == 0) {
+        if (TestLibrary.isVacio(profesor)) {
             profesorMsgError.setText("Profesor No valido! ");
             isValid=false;
         } else profesorMsgError.setText("");
         
-        if (maxalumnos.getText() == null || maxalumnos.getText().length() == 0) {
+        if (TestLibrary.isVacio(maxalumnos)) {
             maxalumnosMsgError.setText("Máximo de alumnos No valido! ");
             isValid=false;
         } else maxalumnosMsgError.setText("");
         
-        if (!TestLibrary.isHora(hora.getText()) || hora.getText() == null || hora.getText().length() == 0) {
+        if (TestLibrary.isVacio(hora) || !TestLibrary.isHora(hora.getText())) {
             horaMsgError.setText("Hora No valido! ");
             isValid=false;
         } else horaMsgError.setText("");
@@ -176,12 +176,12 @@ public class FXMLCursoViewController implements Initializable {
             isValid=false;
         } else diasMsgError.setText("");
         
-        if (!TestLibrary.isFecha(fechainicio.getText()) || fechainicio.getText() == null || fechainicio.getText().length() == 0) {
+        if (TestLibrary.isVacio(fechainicio) || !TestLibrary.isFecha(fechainicio.getText())) {
             fechainicioMsgError.setText("Fecha de inicio No valido! ");
             isValid=false;
         } else fechainicioMsgError.setText("");
         
-        if (!TestLibrary.isFecha(fechafin.getText()) || fechafin.getText() == null || fechafin.getText().length() == 0) {
+        if (TestLibrary.isVacio(fechafin) || !TestLibrary.isFecha(fechafin.getText())) {
             fechafinMsgError.setText("Fecha de inicio No valido! ");
             isValid=false;
         } else fechafinMsgError.setText("");
